@@ -130,6 +130,3 @@ fabric.properties
 hs_err_pid*
 
 # End of https://www.gitignore.io/api/java,eclipse,intellij
-/.idea/evocomp-assignment-2.iml
-/.idea/modules.xml
-/.idea/vcs.xml
