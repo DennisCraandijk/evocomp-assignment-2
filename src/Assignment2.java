@@ -4,8 +4,10 @@
 public class Assignment2 {
 
     public static void main(String[] args) {
-        GeneticAlgorithm GA = new GeneticAlgorithm();
+        PartitioningAlgorithm GA = new PartitioningAlgorithm();
 
-        GA.run();
+        int populationSize = 1000;
+
+        GA.run(populationSize);
     }
 }
