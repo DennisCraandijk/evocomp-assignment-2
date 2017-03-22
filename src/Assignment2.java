@@ -4,10 +4,30 @@
 public class Assignment2 {
 
     public static void main(String[] args) {
-        PartitioningAlgorithm GA = new PartitioningAlgorithm();
+        BaseAlgorithm GA = new BaseAlgorithm();
 
-        int populationSize = 1000;
 
-        GA.run(populationSize);
+        run("MLS");
+    }
+
+    public static void run(String algorithmName) {
+
+        Graph graph = new Graph("Graph500.txt");
+
+
+        switch (algorithmName) {
+            case "GLS":
+                GLS gls = new GLS(1000);
+                gls.partition(graph);
+                break;
+            case "ILS":
+                break;
+            case "MLS":
+                MLS mls = new MLS();
+                mls.partition(graph);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid algorithm: " + algorithmName);
+        }
     }
 }

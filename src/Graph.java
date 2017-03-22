@@ -19,11 +19,11 @@ public class Graph {
         int fitness = 0;
         // for all nodes
         for (int i = 0; i < nodes.length; i++) {
-            int color = solution.bitArray[i];
+            Integer color = solution.bitArray.get(i);
 
             // for all edges with equal color, increment fitness
             for (int j = 0; j < nodes[i].length; j++) {
-                if (color == solution.bitArray[nodes[i][j]]) {
+                if (color == solution.bitArray.get(nodes[i][j])) {
                     fitness++;
                 }
             }
