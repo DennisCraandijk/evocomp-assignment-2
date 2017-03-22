@@ -7,7 +7,7 @@ public class GeneticAlgorithm {
 
         Graph graph = new Graph("Graph500.txt");
 
-        Solution[] population = initializePopulation(1, 10);
+        Solution[] population = initializePopulation(1, graph.graph.length);
 
     }
 

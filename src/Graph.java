@@ -10,7 +10,7 @@ import java.nio.file.Paths;
  */
 public class Graph {
 
-    private int[][] graph;
+    public int[][] graph;
 
     public Graph(String path) {
 
@@ -36,7 +36,8 @@ public class Graph {
                 this.graph[vertexId - 1] = new int[edgeCount];
 
                 for (int j = 0; j < edgeCount; j++) {
-                    this.graph[vertexId - 1][j] = Integer.parseInt(data[j + 4]);
+                    // vertex ids start from 1, so -1 on all ids to build array
+                    this.graph[vertexId - 1][j] = Integer.parseInt(data[j + 4]) - 1;
                 }
 
 
