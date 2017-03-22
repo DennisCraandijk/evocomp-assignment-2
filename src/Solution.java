@@ -65,5 +65,5 @@ public class Solution implements Cloneable {
         } catch (final CloneNotSupportedException ex) {
             throw new AssertionError();
         }
-
+    }
 }
