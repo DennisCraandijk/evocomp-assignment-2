@@ -1,17 +1,22 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Dennis on 21/03/2017.
  */
 public class BaseAlgorithm {
 
-    public Solution best;
+    public Graph graph;
 
-    public Solution[] localOptima;
+    public Solution bestSolution = null;
+
+    //TODO make localOptima capacity variable
+    public List<Solution> localOptima = new ArrayList<>(2500);
+
+    public BaseAlgorithm(Graph graph) {
+        this.graph = graph;
+    }
 
     public List generateRandomSolution(int nodes) {
 
@@ -27,4 +32,10 @@ public class BaseAlgorithm {
 
         return bitArray;
     }
+
+    public void updateFitness(Solution solution) {
+        solution.fitnessValue = graph.scoreSolution(solution);
+    }
+
+
 }

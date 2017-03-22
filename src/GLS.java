@@ -5,15 +5,16 @@ public class GLS extends BaseAlgorithm {
 
     public int populationSize;
 
-    public GLS(int populationSize) {
+    public GLS(Graph graph, int populationSize) {
+        super(graph);
         this.populationSize = populationSize;
     }
 
-    public Solution partition(Graph graph) {
+    public Solution partition() {
         Population population = new Population();
 
         for(int i = 0; i < populationSize; i++) {
-            Solution solution = new Solution(generateRandomSolution(graph.nodes.length), graph);
+            Solution solution = new Solution(generateRandomSolution(graph.nodes.length));
             population.addSolution(solution);
         }
 
