@@ -14,24 +14,6 @@ public class Graph {
         initializeGraphFromFile(path);
     }
 
-    public int scoreSolution(Solution solution) {
-
-        int fitness = 0;
-        // for all nodes
-        for (int i = 0; i < nodes.length; i++) {
-            Integer color = solution.bitArray.get(i);
-
-            // for all edges with equal color, increment fitness
-            for (int j = 0; j < nodes[i].length; j++) {
-                if (color == solution.bitArray.get(nodes[i][j])) {
-                    fitness++;
-                }
-            }
-        }
-
-        return fitness;
-    }
-
     private void initializeGraphFromFile(String path) {
         try {
             String[] lines = readFile(path).split("\\r?\\n");

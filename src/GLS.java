@@ -14,7 +14,7 @@ public class GLS extends BaseAlgorithm {
         Population population = new Population();
 
         for(int i = 0; i < populationSize; i++) {
-            Solution solution = new Solution(generateRandomSolution(graph.nodes.length));
+            Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
             population.addSolution(solution);
         }
 
