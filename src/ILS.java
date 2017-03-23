@@ -14,14 +14,14 @@ public class ILS extends BaseAlgorithm {
         this.mutationSize = mutationSize;
     }
 
-    public Solution partition(int maxlocalOptima) {
+    public Solution partition(int maxLocalOptima) {
 
         // start with random solution
         Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
         updateFitness(solution);
 
         // continue till an amount of local optima or infinitely if set to 0
-        while (this.localOptima.size() < maxlocalOptima || maxlocalOptima == 0) {
+        while (this.localOptima.size() < maxLocalOptima || maxLocalOptima == 0) {
 
             // climb till no improvement is found
             while (true) {
@@ -42,7 +42,7 @@ public class ILS extends BaseAlgorithm {
                 System.out.print("Local optimum " + this.localOptima.size() + " found: " + solution.fitness + "\n");
 
                 if (this.bestSolution == null || solution.fitness > this.bestSolution.fitness) {
-                    this.bestSolution = solution;
+                    this.bestSolution = solution.clone();
                 }
             } else {
                 System.out.print("Same local optimum found \n");

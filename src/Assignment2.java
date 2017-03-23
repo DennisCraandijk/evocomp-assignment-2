@@ -25,7 +25,7 @@ public class Assignment2 {
                 gls.partition();
                 break;
             case "ILS":
-                ILS ils = new ILS(graph, 250);
+                ILS ils = new ILS(graph, 5);
                 ils.partition(maxLocalOptima);
                 break;
             case "MLS":

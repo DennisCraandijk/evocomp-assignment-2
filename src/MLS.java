@@ -27,11 +27,12 @@ public class MLS extends BaseAlgorithm {
             }
 
             //add to local optima and best
-            this.localOptima.add(solution);
+            Solution localOptimum = solution.clone();
+            this.localOptima.add(localOptimum);
             System.out.print("Local optimum " + this.localOptima.size() + " found: " + solution.fitness + "\n");
 
             if (this.bestSolution == null || solution.fitness > this.bestSolution.fitness) {
-                this.bestSolution = solution;
+                this.bestSolution = solution.clone();
             }
         }
 
