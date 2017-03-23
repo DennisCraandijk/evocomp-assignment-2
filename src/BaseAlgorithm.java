@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Dennis on 21/03/2017.
  */
-public class BaseAlgorithm {
+class BaseAlgorithm {
 
     public Graph graph;
 

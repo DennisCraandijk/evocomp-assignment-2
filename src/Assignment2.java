@@ -10,12 +10,12 @@ public class Assignment2 {
 //        String algorithmName = "GLS";
 
         // set to 0 for infinite
-        int maxLocalOptima = 100;
+        int maxLocalOptima = 2500;
 
         run(algorithmName, maxLocalOptima);
     }
 
-    public static void run(String algorithmName, int maxLocalOptima) {
+    private static void run(String algorithmName, int maxLocalOptima) {
 
         Graph graph = new Graph("Graph500.txt");
 
@@ -25,7 +25,7 @@ public class Assignment2 {
                 gls.partition();
                 break;
             case "ILS":
-                ILS ils = new ILS(graph, 5);
+                ILS ils = new ILS(graph, 2);
                 ils.partition(maxLocalOptima);
                 break;
             case "MLS":

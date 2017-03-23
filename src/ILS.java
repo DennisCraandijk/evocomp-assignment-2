@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -26,15 +24,13 @@ public class ILS extends BaseAlgorithm {
             // climb till no improvement is found
             while (true) {
                 Solution climbedSolution = climbFirstImprovement(solution);
-                if (climbedSolution == null) {
-                    break;
-                }
+                if (climbedSolution == null) break;
                 solution = climbedSolution;
             }
 
             // check if this local optimum is different from the last local optimum
             // if this is the same as the last local optimum, it hasn't left base of attraction
-            if (this.localOptima.size() == 0 || solution.bitArray.equals(this.localOptima.get(this.localOptima.size() - 1).bitArray) == false) {
+            if (this.localOptima.size() == 0 || !solution.bitArray.equals(this.localOptima.get(this.localOptima.size() - 1).bitArray)) {
                 //add to local optima and best
 
                 Solution localOptimum = solution.clone();
@@ -48,8 +44,9 @@ public class ILS extends BaseAlgorithm {
                 System.out.print("Same local optimum found \n");
             }
 
-            // mutate to find a new local optima
-            mutate(solution);
+            // continue from a new mutation from the best know solution
+            solution = bestSolution.clone();
+            solution = mutate(solution);
         }
 
         return null;
