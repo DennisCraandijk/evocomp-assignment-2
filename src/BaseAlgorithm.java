@@ -33,14 +33,16 @@ class BaseAlgorithm {
         for (int i = 0; i < this.graph.nodes.length; i++) {
             Integer color = solution.bitArray.get(i);
 
-            // for all edges with equal color, increment fitness
+            // for all edges with unequal color, increment fitness
             for (int j = 0; j < this.graph.nodes[i].length; j++) {
-                if (color == solution.bitArray.get(this.graph.nodes[i][j])) {
+                if (color != solution.bitArray.get(this.graph.nodes[i][j])) {
                     fitness++;
                 }
             }
         }
 
+        // remove all double edges
+        fitness = fitness / 2;
         return fitness;
     }
 
@@ -77,7 +79,7 @@ class BaseAlgorithm {
                 solution.vertexSwap(i, j);
                 updateFitness(solution);
 
-                if (solution.fitness > baseFitness) {
+                if (solution.fitness < baseFitness) {
                     return solution;
                 }
 
