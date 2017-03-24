@@ -5,9 +5,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ILS extends BaseAlgorithm {
 
-    public int mutationSize;
+    private int mutationSize;
 
-    public ILS(Graph graph, int maxLocalOptima, int maxCPUTime, int mutationSize) {
+    ILS(Graph graph, int maxLocalOptima, int maxCPUTime, int mutationSize) {
         super(graph, maxLocalOptima, maxCPUTime);
         this.mutationSize = mutationSize;
     }
@@ -52,7 +52,7 @@ public class ILS extends BaseAlgorithm {
      * @param solution
      * @return
      */
-    public Solution mutate(Solution solution, int times) {
+    private Solution mutate(Solution solution, int times) {
         for (int i = 0; i < times; i++) {
             int j = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));
             int k = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));

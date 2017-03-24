@@ -7,17 +7,17 @@ import java.util.List;
  */
 class BaseAlgorithm {
 
-    public Graph graph;
+    Graph graph;
 
-    public int functionEvaluations = 0;
+    int functionEvaluations = 0;
 
-    public Solution bestSolution = null;
+    Solution bestSolution = null;
 
-    public List<Solution> localOptima;
-    public int maxLocalOptima;
-    public int maxCPUTime;
+    List<Solution> localOptima;
+    private int maxLocalOptima;
+    private int maxCPUTime;
 
-    public long startTime;
+    private long startTime;
 
     /**
      * Construct baseAlgorithm
@@ -25,7 +25,7 @@ class BaseAlgorithm {
      * @param graph
      * @param maxLocalOptima
      */
-    public BaseAlgorithm(Graph graph, int maxLocalOptima, int maxCPUTime) {
+    BaseAlgorithm(Graph graph, int maxLocalOptima, int maxCPUTime) {
         this.startTime = System.currentTimeMillis();
         this.maxCPUTime = maxCPUTime;
 
@@ -50,7 +50,7 @@ class BaseAlgorithm {
      * @param solution
      * @return fitnessValue
      */
-    public int evaluateSolution(Solution solution) {
+    int evaluateSolution(Solution solution) {
 
         functionEvaluations++;
 
@@ -65,7 +65,7 @@ class BaseAlgorithm {
     }
 
     // overloaded
-    public int getColorConflicts(Solution solution, int nodeId) {
+    private int getColorConflicts(Solution solution, int nodeId) {
         return getColorConflicts(solution, nodeId, -1);
     }
 
@@ -77,16 +77,16 @@ class BaseAlgorithm {
      * @param excludeNodeId
      * @return
      */
-    public int getColorConflicts(Solution solution, int nodeId, int excludeNodeId) {
+    private int getColorConflicts(Solution solution, int nodeId, int excludeNodeId) {
 
         int colorConflicts = 0;
 
-        int color = solution.bitArray.get(nodeId).intValue();
+        int color = solution.bitArray.get(nodeId);
 
         // for all edges with unequal color, increment fitness
         for (int i = 0; i < this.graph.nodes[nodeId].length; i++) {
             // if node  has different color
-            if (color != solution.bitArray.get(this.graph.nodes[nodeId][i]).intValue()) {
+            if (color != solution.bitArray.get(this.graph.nodes[nodeId][i])) {
                 if (excludeNodeId == -1 || excludeNodeId != this.graph.nodes[nodeId][i]) colorConflicts++;
             }
         }
@@ -102,7 +102,7 @@ class BaseAlgorithm {
      * @param iOne
      * @return
      */
-    public int evaluateSwapPotential(Solution solution, int iZero, int iOne) {
+    private int evaluateSwapPotential(Solution solution, int iZero, int iOne) {
 
         // TODO hacky workaround, otherwise the score will divert after some runs
         solution = solution.clone();
@@ -124,7 +124,7 @@ class BaseAlgorithm {
      * @param nodes
      * @return
      */
-    public List<Integer> generateRandomBitArray(int nodes) {
+    List<Integer> generateRandomBitArray(int nodes) {
 
         List<Integer> bitArray = new ArrayList<>(nodes);
 
@@ -147,7 +147,7 @@ class BaseAlgorithm {
      * @param solution
      * @return
      */
-    public Solution climbFirstImprovement(Solution solution) {
+    Solution climbFirstImprovement(Solution solution) {
 
         for (int i = 0; i < (this.graph.nodes.length / 2); i++) {
             for (int j = 0; j < (this.graph.nodes.length / 2); j++) {
@@ -178,7 +178,7 @@ class BaseAlgorithm {
         return null;
     }
 
-    public void saveNewOptimum(Solution solution) {
+    void saveNewOptimum(Solution solution) {
         //add to local optima and best
         Solution localOptimum = solution.clone();
         this.localOptima.add(localOptimum);
@@ -189,11 +189,11 @@ class BaseAlgorithm {
         }
     }
 
-    public int getCPUTime() {
+    int getCPUTime() {
         return (int) (System.currentTimeMillis() - startTime);
     }
 
-    public boolean shouldStop() {
+    boolean shouldStop() {
         boolean stopCPU = (this.maxCPUTime != 0 && getCPUTime() > this.maxCPUTime);
 
         boolean stopLocalOptima = (this.maxLocalOptima != 0 && this.localOptima.size() >= this.maxLocalOptima);

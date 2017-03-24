@@ -8,7 +8,7 @@ public class MLS extends BaseAlgorithm {
      * @param graph
      * @param maxLocalOptima
      */
-    public MLS(Graph graph, int maxLocalOptima, int maxCPUTime) {
+    MLS(Graph graph, int maxLocalOptima, int maxCPUTime) {
         super(graph, maxLocalOptima, maxCPUTime);
     }
 

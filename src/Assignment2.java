@@ -38,8 +38,9 @@ public class Assignment2 {
                 throw new IllegalArgumentException("Invalid algorithm: " + algorithmName);
         }
 
-        algorithm.partition();
-        algorithm.getCPUTime();
+        Solution best = algorithm.partition();
+        int time = algorithm.getCPUTime();
+        int functionEvaluations = algorithm.functionEvaluations;
 
         System.out.print("Best fitness found:" + algorithm.bestSolution.fitness + "\n");
     }

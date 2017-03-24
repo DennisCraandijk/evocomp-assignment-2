@@ -6,9 +6,9 @@ import java.util.List;
  */
 public class GLS extends BaseAlgorithm {
 
-    public int populationSize;
+    private int populationSize;
 
-    public GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
+    GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
         super(graph, maxLocalOptima, maxCPUTime);
         this.populationSize = populationSize;
     }
@@ -72,8 +72,8 @@ public class GLS extends BaseAlgorithm {
         }
 
         for(int i = 0; i < parentBitArray1.size(); i++) {
-            int parentBit1 = parentBitArray1.get(i).intValue();
-            int parentBit2 = parentBitArray2.get(i).intValue();
+            int parentBit1 = parentBitArray1.get(i);
+            int parentBit2 = parentBitArray2.get(i);
 
             // invert one parent if hamming distance it larger than l/2
             if(invertOneParent) parentBit1 = 1 - parentBit1;
@@ -103,11 +103,11 @@ public class GLS extends BaseAlgorithm {
      * @param bitArray2
      * @return hamming distance
      */
-    public int getHammingDistance(List<Integer> bitArray1, List<Integer> bitArray2)
+    private int getHammingDistance(List<Integer> bitArray1, List<Integer> bitArray2)
     {
         int distance = 0;
         for(int i = 0; i < bitArray1.size(); i++) {
-            if(bitArray1.get(i) != bitArray2.get(i)) {
+            if(bitArray1.get(i).intValue() != bitArray2.get(i).intValue()){
                 distance++;
             }
         }

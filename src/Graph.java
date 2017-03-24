@@ -5,11 +5,11 @@ import java.io.IOException;
 /**
  * Created by Dennis on 21/03/2017.
  */
-public class Graph {
+class Graph {
 
-    public int[][] nodes;
+    int[][] nodes;
 
-    public Graph(String path) {
+    Graph(String path) {
 
         initializeGraphFromFile(path);
     }
@@ -20,8 +20,8 @@ public class Graph {
 
             this.nodes = new int[lines.length][];
 
-            for (int i = 0; i < lines.length; i++) {
-                String[] data = lines[i].split("\\s+");
+            for (String line : lines) {
+                String[] data = line.split("\\s+");
 
                 // use the data to build an nodes matrix
                 // data[1] is the id of the vertex (starting from 1)
@@ -52,7 +52,7 @@ public class Graph {
      * @return
      * @throws IOException
      */
-    static String readFile(String path) throws IOException {
+    private static String readFile(String path) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
@@ -62,8 +62,7 @@ public class Graph {
                 sb.append(System.lineSeparator());
                 line = br.readLine();
             }
-            String everything = sb.toString();
-            return everything;
+            return sb.toString();
         }
     }
 }

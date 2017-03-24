@@ -1,8 +1,5 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Dennis on 21/03/2017.
@@ -12,26 +9,26 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Solution implements Cloneable {
 
 
-    public int fitness;
+    int fitness;
 
 
-    public List<Integer> bitArray;
+    List<Integer> bitArray;
 
-    public List<List<Integer>> colorIndex;
+    List<List<Integer>> colorIndex;
 
 
     /**
      * Construct with random solution
  * @param bitArray
      */
-    public Solution(List<Integer> bitArray) {
+    Solution(List<Integer> bitArray) {
         this(bitArray, 0);
     }
 
     /**
      * Construct with random solution
      */
-    public Solution(List<Integer> bitArray, int fitness) {
+    Solution(List<Integer> bitArray, int fitness) {
         this.bitArray = bitArray;
         this.fitness = fitness;
         this.colorIndex = constructColorIndex(bitArray);
@@ -45,7 +42,7 @@ public class Solution implements Cloneable {
         List<Integer> verticesColored1 = new ArrayList<>(bitArray.size() / 2);
 
         for(int i = 0; i < bitArray.size(); i++) {
-            if(bitArray.get(i).intValue() == 0) {
+            if(bitArray.get(i) == 0) {
                 verticesColored0.add(i);
             } else {
                 verticesColored1.add(i);
@@ -63,11 +60,11 @@ public class Solution implements Cloneable {
      * @param iZero
      * @param iOne
      */
-    public void vertexSwap(int iZero, int iOne) {
+    void vertexSwap(int iZero, int iOne) {
 
         // swap vertices in the colorIndex
-        int vertexId0 = colorIndex.get(0).get(iZero).intValue();
-        int vertexId1 = colorIndex.get(1).get(iOne).intValue();
+        int vertexId0 = colorIndex.get(0).get(iZero);
+        int vertexId1 = colorIndex.get(1).get(iOne);
 
         colorIndex.get(0).set(iZero, vertexId1);
         colorIndex.get(1).set(iOne, vertexId0);
@@ -75,8 +72,6 @@ public class Solution implements Cloneable {
         // swap vertices in the bitArray
         bitArray.set(vertexId0, 1);
         bitArray.set(vertexId1, 0);
-
-        return;
 
     }
 
