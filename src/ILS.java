@@ -33,15 +33,9 @@ public class ILS extends BaseAlgorithm {
             // check if this local optimum is different from the last local optimum
             // if this is the same as the last local optimum, it hasn't left base of attraction
             if (this.localOptima.size() == 0 || !solution.bitArray.equals(this.localOptima.get(this.localOptima.size() - 1).bitArray)) {
-                //add to local optima and best
 
-                Solution localOptimum = solution.clone();
-                this.localOptima.add(localOptimum);
-                System.out.print("Local optimum " + this.localOptima.size() + " found: " + solution.fitness + "\n");
+                saveNewOptimum(solution);
 
-                if (this.bestSolution == null || solution.fitness < this.bestSolution.fitness) {
-                    this.bestSolution = solution.clone();
-                }
             } else {
                 System.out.print("Same local optimum found \n");
             }
@@ -52,7 +46,7 @@ public class ILS extends BaseAlgorithm {
             solution.fitness = evaluateSolution(solution);
         }
 
-        return null;
+        return this.bestSolution;
     }
 
     /**

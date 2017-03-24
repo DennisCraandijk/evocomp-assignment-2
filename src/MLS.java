@@ -31,14 +31,9 @@ public class MLS extends BaseAlgorithm {
                 solution = climbedSolution;
             }
 
-            //add to local optima and best
-            Solution localOptimum = solution.clone();
-            this.localOptima.add(localOptimum);
-            System.out.print("Local optimum " + this.localOptima.size() + " found: " + solution.fitness + "\n");
+            saveNewOptimum(solution);
 
-            if (this.bestSolution == null || solution.fitness < this.bestSolution.fitness) {
-                this.bestSolution = solution.clone();
-            }
+
         }
 
         return this.bestSolution;

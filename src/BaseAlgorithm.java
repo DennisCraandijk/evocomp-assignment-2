@@ -16,12 +16,15 @@ class BaseAlgorithm {
     public List<Solution> localOptima;
     public int maxLocalOptima;
 
+    public long startTime;
+
     /**
      * Construct baseAlgorithm
      * @param graph
      * @param maxLocalOptima
      */
     public BaseAlgorithm(Graph graph, int maxLocalOptima) {
+        this.startTime = System.currentTimeMillis();
         this.graph = graph;
         this.maxLocalOptima = maxLocalOptima;
         this.localOptima = new ArrayList<>(maxLocalOptima);
@@ -156,4 +159,18 @@ class BaseAlgorithm {
         return null;
     }
 
+    public void saveNewOptimum(Solution solution) {
+        //add to local optima and best
+        Solution localOptimum = solution.clone();
+        this.localOptima.add(localOptimum);
+        System.out.print("Local optimum " + this.localOptima.size() + " found: " + solution.fitness + "\n");
+
+        if (this.bestSolution == null || solution.fitness < this.bestSolution.fitness) {
+            this.bestSolution = solution.clone();
+        }
+    }
+
+    public int getCPUTime() {
+       return (int)(System.currentTimeMillis() - startTime);
+    }
 }

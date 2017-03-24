@@ -10,7 +10,7 @@ public class Assignment2 {
 //        String algorithmName = "GLS";
 
         // set to 0 for infinite
-        int maxLocalOptima = 2500;
+        int maxLocalOptima = 20;
 
         run(algorithmName, maxLocalOptima);
     }
@@ -23,14 +23,17 @@ public class Assignment2 {
             case "GLS":
                 GLS gls = new GLS(graph, maxLocalOptima, 1000);
                 gls.partition();
+                gls.getCPUTime();
                 break;
             case "ILS":
                 ILS ils = new ILS(graph, maxLocalOptima, 6);
                 ils.partition();
+                ils.getCPUTime();
                 break;
             case "MLS":
                 MLS mls = new MLS(graph, maxLocalOptima);
                 mls.partition();
+                ils.getCPUTime();
 
                 System.out.print("Best fitness found:" + mls.bestSolution.fitness + "\n");
                 break;

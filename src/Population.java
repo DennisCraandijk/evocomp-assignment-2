@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -9,10 +10,11 @@ public class Population {
 
     public int generation;
 
-    public List population;
+    public List<Solution> population;
 
-    public Population() {
+    public Population(int populationSize) {
         this.generation = 0;
+        this.population = new ArrayList<>(populationSize);
     }
 
     public void addSolution(Solution solution) {
