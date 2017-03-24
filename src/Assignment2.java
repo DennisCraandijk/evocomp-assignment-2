@@ -21,16 +21,16 @@ public class Assignment2 {
 
         switch (algorithmName) {
             case "GLS":
-                GLS gls = new GLS(graph, 1000);
+                GLS gls = new GLS(graph, maxLocalOptima, 1000);
                 gls.partition();
                 break;
             case "ILS":
-                ILS ils = new ILS(graph, 2);
-                ils.partition(maxLocalOptima);
+                ILS ils = new ILS(graph, maxLocalOptima, 6);
+                ils.partition();
                 break;
             case "MLS":
-                MLS mls = new MLS(graph);
-                mls.partition(maxLocalOptima);
+                MLS mls = new MLS(graph, maxLocalOptima);
+                mls.partition();
 
                 System.out.print("Best fitness found:" + mls.bestSolution.fitness + "\n");
                 break;

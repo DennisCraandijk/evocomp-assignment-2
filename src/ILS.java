@@ -7,19 +7,21 @@ public class ILS extends BaseAlgorithm {
 
     public int mutationSize;
 
-    public ILS(Graph graph, int mutationSize) {
-        super(graph);
+    public ILS(Graph graph, int maxLocalOptima, int mutationSize) {
+        super(graph, maxLocalOptima);
         this.mutationSize = mutationSize;
     }
 
-    public Solution partition(int maxLocalOptima) {
+    public Solution partition() {
 
         // start with random solution
         Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
-        updateFitness(solution);
+        solution.fitness = evaluateSolution(solution);
 
         // continue till an amount of local optima or infinitely if set to 0
-        while (this.localOptima.size() < maxLocalOptima || maxLocalOptima == 0) {
+        while (this.localOptima.size() < this.maxLocalOptima || this.maxLocalOptima == 0) {
+
+
 
             // climb till no improvement is found
             while (true) {
@@ -46,19 +48,20 @@ public class ILS extends BaseAlgorithm {
 
             // continue from a new mutation from the best know solution
             solution = bestSolution.clone();
-            solution = mutate(solution);
+            solution = mutate(solution, this.mutationSize);
+            solution.fitness = evaluateSolution(solution);
         }
 
         return null;
     }
 
     /**
+     * Do X amount random vertex swaps
      * @param solution
-     * @param size     the size of mutations to be made
      * @return
      */
-    public Solution mutate(Solution solution) {
-        for (int i = 0; i < this.mutationSize; i++) {
+    public Solution mutate(Solution solution, int times) {
+        for (int i = 0; i < times; i++) {
             int j = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));
             int k = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));
 

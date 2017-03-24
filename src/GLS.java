@@ -5,8 +5,8 @@ public class GLS extends BaseAlgorithm {
 
     public int populationSize;
 
-    public GLS(Graph graph, int populationSize) {
-        super(graph);
+    public GLS(Graph graph, int maxLocalOptima, int populationSize) {
+        super(graph, maxLocalOptima);
         this.populationSize = populationSize;
     }
 

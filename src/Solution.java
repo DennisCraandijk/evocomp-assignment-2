@@ -66,8 +66,8 @@ public class Solution implements Cloneable {
     public void vertexSwap(int iZero, int iOne) {
 
         // swap vertices in the colorIndex
-        int vertexId0 = colorIndex.get(0).get(iZero);
-        int vertexId1 = colorIndex.get(1).get(iOne);
+        int vertexId0 = colorIndex.get(0).get(iZero).intValue();
+        int vertexId1 = colorIndex.get(1).get(iOne).intValue();
 
         colorIndex.get(0).set(iZero, vertexId1);
         colorIndex.get(1).set(iOne, vertexId0);
@@ -79,40 +79,6 @@ public class Solution implements Cloneable {
         return;
 
     }
-
-
-    /*public void vertexSwap(int nthZero, int nthOne) {
-
-        //TODO change to using 2 dimensional color array
-        int zeroCount = 0;
-        int iZero = 0;
-
-        int oneCount = 0;
-        int iOne = 0;
-
-        for(int i = 0; i < bitArray.size(); i++) {
-            // find the Nth zero
-            if (zeroCount != nthZero && bitArray.get(i).intValue() == 0) {
-                zeroCount++;
-                iZero = i;
-            }
-            // find the Nth one
-            else if (oneCount != nthOne && bitArray.get(i).intValue() == 1){
-                oneCount++;
-                iOne = i;
-            }
-
-            // Swap if both are found, and break out of the loop
-            if(zeroCount == nthZero && oneCount == nthOne) {
-
-                bitArray.set(iZero, 1);
-                bitArray.set(iOne, 0);
-
-                break;
-            }
-        }
-
-    }*/
 
     @Override
     public Solution clone() {

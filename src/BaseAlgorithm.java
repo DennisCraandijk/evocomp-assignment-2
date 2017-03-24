@@ -9,43 +9,100 @@ class BaseAlgorithm {
 
     public Graph graph;
 
-    public Solution bestSolution = null;
-
-    //TODO make localOptima capacity variable
-    public List<Solution> localOptima = new ArrayList<>(2500);
-
     public int functionEvaluations = 0;
 
-    public BaseAlgorithm(Graph graph) {
+    public Solution bestSolution = null;
+
+    public List<Solution> localOptima;
+    public int maxLocalOptima;
+
+    /**
+     * Construct baseAlgorithm
+     * @param graph
+     * @param maxLocalOptima
+     */
+    public BaseAlgorithm(Graph graph, int maxLocalOptima) {
         this.graph = graph;
+        this.maxLocalOptima = maxLocalOptima;
+        this.localOptima = new ArrayList<>(maxLocalOptima);
     }
 
-    public void updateFitness(Solution solution) {
-        solution.fitness = evaluateSolution(solution);
-    }
-
+    /**
+     * Amount of edges with color-conflict
+     * @param solution
+     * @return fitnessValue
+     */
     public int evaluateSolution(Solution solution) {
 
         functionEvaluations++;
 
-        int fitness = 0;
+        int colorConflicts = 0;
         // for all nodes
         for (int i = 0; i < this.graph.nodes.length; i++) {
-            Integer color = solution.bitArray.get(i);
+            colorConflicts = colorConflicts + getColorConflicts(solution, i);
+        }
 
-            // for all edges with unequal color, increment fitness
-            for (int j = 0; j < this.graph.nodes[i].length; j++) {
-                if (color != solution.bitArray.get(this.graph.nodes[i][j])) {
-                    fitness++;
-                }
+        // only return the edges, not the nodes
+        return colorConflicts / 2;
+    }
+
+    // overloaded
+    public int getColorConflicts(Solution solution, int nodeId) {
+        return getColorConflicts(solution, nodeId, -1);
+    }
+
+    /**
+     * get amount edges with color-conflict for a specific node
+     * @param solution
+     * @param nodeId
+     * @param excludeNodeId
+     * @return
+     */
+    public int getColorConflicts(Solution solution, int nodeId, int excludeNodeId) {
+
+        int colorConflicts = 0;
+
+        int color = solution.bitArray.get(nodeId).intValue();
+
+        // for all edges with unequal color, increment fitness
+        for (int i = 0; i < this.graph.nodes[nodeId].length; i++) {
+            // if node  has different color
+            if (color != solution.bitArray.get(this.graph.nodes[nodeId][i]).intValue()) {
+                if (excludeNodeId == -1 || excludeNodeId != this.graph.nodes[nodeId][i]) colorConflicts++;
             }
         }
 
-        // remove all double edges
-        fitness = fitness / 2;
-        return fitness;
+        return colorConflicts;
     }
 
+    /**
+     * how much the fitnessvalue will change if a swap is done
+     * @param solution
+     * @param iZero
+     * @param iOne
+     * @return
+     */
+    public int evaluateSwapPotential(Solution solution, int iZero, int iOne) {
+
+        // TODO hacky workaround, otherwise the score will divert after some runs
+        solution = solution.clone();
+
+        int currentColorConflicts = getColorConflicts(solution, solution.colorIndex.get(0).get(iZero)) + getColorConflicts(solution, solution.colorIndex.get(1).get(iOne), solution.colorIndex.get(0).get(iZero));
+
+        solution.vertexSwap(iZero, iOne);
+
+        int newColorConflicts = getColorConflicts(solution, solution.colorIndex.get(0).get(iZero)) + getColorConflicts(solution, solution.colorIndex.get(1).get(iOne), solution.colorIndex.get(0).get(iZero));
+
+        // the new amount of conflicts minus the old amount of conflicts
+        return newColorConflicts - currentColorConflicts;
+    }
+
+
+    /**
+     * Generate bitarray as initial solultion
+     * @param nodes
+     * @return
+     */
     public List<Integer> generateRandomBitArray(int nodes) {
 
         List<Integer> bitArray = new ArrayList<>(nodes);
@@ -69,26 +126,34 @@ class BaseAlgorithm {
      * @return
      */
     public Solution climbFirstImprovement(Solution solution) {
-        int baseFitness = solution.fitness;
 
         for (int i = 0; i < (this.graph.nodes.length / 2); i++) {
             for (int j = 0; j < (this.graph.nodes.length / 2); j++) {
 
 
-                //swap  0 and 1 colored vertexes in an incrementing way and check fitness
-                solution.vertexSwap(i, j);
-                updateFitness(solution);
+                // check the change in fitness if a swap would happen
+                int swapPotential = evaluateSwapPotential(solution, i, j);
 
-                if (solution.fitness < baseFitness) {
+                // if the fitness can improve, do a swap
+                if (swapPotential < 0) {
+
+                    //solution.fitness = solution.fitness + swapPotential;
+                    solution.vertexSwap(i, j);
+                    solution.fitness = solution.fitness + swapPotential;
+
+                    // check if the new fitness value is correct with this code
+                    /*int evaluation = evaluateSolution(solution);
+                    if (solution.fitness != evaluation) {
+                        System.out.print("\n\n Error \n\n");
+                    }*/
+
                     return solution;
                 }
-
-                // swap back to original
-                solution.vertexSwap(j, i);
 
             }
         }
 
         return null;
     }
+
 }
