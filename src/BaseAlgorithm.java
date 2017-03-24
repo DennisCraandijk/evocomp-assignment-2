@@ -15,23 +15,38 @@ class BaseAlgorithm {
 
     public List<Solution> localOptima;
     public int maxLocalOptima;
+    public int maxCPUTime;
 
     public long startTime;
 
     /**
      * Construct baseAlgorithm
+     *
      * @param graph
      * @param maxLocalOptima
      */
-    public BaseAlgorithm(Graph graph, int maxLocalOptima) {
+    public BaseAlgorithm(Graph graph, int maxLocalOptima, int maxCPUTime) {
         this.startTime = System.currentTimeMillis();
+        this.maxCPUTime = maxCPUTime;
+
         this.graph = graph;
+
         this.maxLocalOptima = maxLocalOptima;
         this.localOptima = new ArrayList<>(maxLocalOptima);
     }
 
     /**
+     * Partition the graph
+     *
+     * @return
+     */
+    public Solution partition() {
+        return null;
+    }
+
+    /**
      * Amount of edges with color-conflict
+     *
      * @param solution
      * @return fitnessValue
      */
@@ -56,6 +71,7 @@ class BaseAlgorithm {
 
     /**
      * get amount edges with color-conflict for a specific node
+     *
      * @param solution
      * @param nodeId
      * @param excludeNodeId
@@ -80,6 +96,7 @@ class BaseAlgorithm {
 
     /**
      * how much the fitnessvalue will change if a swap is done
+     *
      * @param solution
      * @param iZero
      * @param iOne
@@ -103,6 +120,7 @@ class BaseAlgorithm {
 
     /**
      * Generate bitarray as initial solultion
+     *
      * @param nodes
      * @return
      */
@@ -125,6 +143,7 @@ class BaseAlgorithm {
     /**
      * Swaps a 0 and 1 on the string with incrementing index
      * Returns first improved solution
+     *
      * @param solution
      * @return
      */
@@ -171,6 +190,14 @@ class BaseAlgorithm {
     }
 
     public int getCPUTime() {
-       return (int)(System.currentTimeMillis() - startTime);
+        return (int) (System.currentTimeMillis() - startTime);
+    }
+
+    public boolean shouldStop() {
+        boolean stopCPU = (this.maxCPUTime != 0 && getCPUTime() > this.maxCPUTime);
+
+        boolean stopLocalOptima = (this.maxLocalOptima != 0 && this.localOptima.size() >= this.maxLocalOptima);
+
+        return (stopCPU || stopLocalOptima);
     }
 }

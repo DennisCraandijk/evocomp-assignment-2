@@ -8,15 +8,15 @@ public class MLS extends BaseAlgorithm {
      * @param graph
      * @param maxLocalOptima
      */
-    public MLS(Graph graph, int maxLocalOptima) {
-        super(graph, maxLocalOptima);
+    public MLS(Graph graph, int maxLocalOptima, int maxCPUTime) {
+        super(graph, maxLocalOptima, maxCPUTime);
     }
 
     public Solution partition() {
 
-        // continue till an amount of local optima or infinitely if set to 0
-        while(localOptima.size() < this.maxLocalOptima || this.maxLocalOptima == 0) {
 
+        // continue till stopping criteria is met
+        while (!shouldStop()) {
 
             // start with random solution
             Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));

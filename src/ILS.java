@@ -7,8 +7,8 @@ public class ILS extends BaseAlgorithm {
 
     public int mutationSize;
 
-    public ILS(Graph graph, int maxLocalOptima, int mutationSize) {
-        super(graph, maxLocalOptima);
+    public ILS(Graph graph, int maxLocalOptima, int maxCPUTime, int mutationSize) {
+        super(graph, maxLocalOptima, maxCPUTime);
         this.mutationSize = mutationSize;
     }
 
@@ -18,10 +18,8 @@ public class ILS extends BaseAlgorithm {
         Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
         solution.fitness = evaluateSolution(solution);
 
-        // continue till an amount of local optima or infinitely if set to 0
-        while (this.localOptima.size() < this.maxLocalOptima || this.maxLocalOptima == 0) {
-
-
+        // continue till stopping criteria is met
+        while (!shouldStop()) {
 
             // climb till no improvement is found
             while (true) {

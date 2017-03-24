@@ -12,33 +12,35 @@ public class Assignment2 {
         // set to 0 for infinite
         int maxLocalOptima = 20;
 
-        run(algorithmName, maxLocalOptima);
+        // set to 0 for infinite
+        int maxCPUTime = 0;
+
+        run(algorithmName, maxLocalOptima, maxCPUTime);
     }
 
-    private static void run(String algorithmName, int maxLocalOptima) {
+    private static void run(String algorithmName, int maxLocalOptima, int maxCPUTime) {
 
         Graph graph = new Graph("Graph500.txt");
 
+        BaseAlgorithm algorithm;
+
         switch (algorithmName) {
             case "GLS":
-                GLS gls = new GLS(graph, maxLocalOptima, 1000);
-                gls.partition();
-                gls.getCPUTime();
+                algorithm = new GLS(graph, maxLocalOptima, maxCPUTime, 1000);
                 break;
             case "ILS":
-                ILS ils = new ILS(graph, maxLocalOptima, 6);
-                ils.partition();
-                ils.getCPUTime();
+                algorithm = new ILS(graph, maxLocalOptima, maxCPUTime, 6);
                 break;
             case "MLS":
-                MLS mls = new MLS(graph, maxLocalOptima);
-                mls.partition();
-                ils.getCPUTime();
-
-                System.out.print("Best fitness found:" + mls.bestSolution.fitness + "\n");
+                algorithm = new MLS(graph, maxLocalOptima, maxCPUTime);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid algorithm: " + algorithmName);
         }
+
+        algorithm.partition();
+        algorithm.getCPUTime();
+
+        System.out.print("Best fitness found:" + algorithm.bestSolution.fitness + "\n");
     }
 }

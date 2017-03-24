@@ -8,8 +8,8 @@ public class GLS extends BaseAlgorithm {
 
     public int populationSize;
 
-    public GLS(Graph graph, int maxLocalOptima, int populationSize) {
-        super(graph, maxLocalOptima);
+    public GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
+        super(graph, maxLocalOptima, maxCPUTime);
         this.populationSize = populationSize;
     }
 
@@ -26,10 +26,11 @@ public class GLS extends BaseAlgorithm {
             population.addSolution(solution);
         }
 
-        // continue till an amount of local optima or infinitely if set to 0
-        while (this.localOptima.size() < this.maxLocalOptima || this.maxLocalOptima == 0) {
+        // continue till stopping criteria is met
+        while (!shouldStop()) {
 
             for (int i = 0; i < population.population.size(); i++) {
+
                 // climb till no improvement is found
                 while (true) {
                     Solution climbedSolution = climbFirstImprovement(population.population.get(i));
