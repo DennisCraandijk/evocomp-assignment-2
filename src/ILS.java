@@ -21,12 +21,7 @@ public class ILS extends BaseAlgorithm {
         // continue till stopping criteria is met
         while (!shouldStop()) {
 
-            // climb till no improvement is found
-            while (true) {
-                Solution climbedSolution = climbFirstImprovement(solution);
-                if (climbedSolution == null) break;
-                solution = climbedSolution;
-            }
+            solution = hillClimb(solution);
 
             // check if this local optimum is different from the last local optimum
             // if this is the same as the last local optimum, it hasn't left base of attraction

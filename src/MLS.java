@@ -22,14 +22,7 @@ public class MLS extends BaseAlgorithm {
             Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
             solution.fitness = evaluateSolution(solution);
 
-            // climb till no improvement is found
-            while (true) {
-                Solution climbedSolution = climbFirstImprovement(solution);
-                if (climbedSolution == null) {
-                    break;
-                }
-                solution = climbedSolution;
-            }
+            solution = hillClimb(solution);
 
             saveNewOptimum(solution);
 
