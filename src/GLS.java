@@ -23,6 +23,8 @@ public class GLS extends BaseAlgorithm {
         // generate initial population
         for(int i = 0; i < populationSize; i++) {
             Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
+            solution.fitness = evaluateSolution(solution);
+
             population.addSolution(solution);
         }
 
@@ -30,6 +32,9 @@ public class GLS extends BaseAlgorithm {
         while (!shouldStop()) {
 
             for (int i = 0; i < population.population.size(); i++) {
+
+                // break if population iteration exceeds stopping criteria
+                if(shouldStop()) break;
 
                 // climb till no improvement is found
                 while (true) {
@@ -42,6 +47,8 @@ public class GLS extends BaseAlgorithm {
 
             }
 
+            Solution child = uniformCrossover(population.population.get(0), population.population.get(1));
+
             // TODO crossover and selection
 
             //TODO exit if converged
@@ -53,27 +60,27 @@ public class GLS extends BaseAlgorithm {
 
     /**
      * Uniform crossover on two parents
-     * @param parentBitArray1
-     * @param parentBitArray2
+     * @param parent1
+     * @param parent1
      * @return childBitArray
      */
-    public List<Integer> crossover(List<Integer> parentBitArray1, List<Integer> parentBitArray2)
+    public Solution uniformCrossover(Solution parent1, Solution parent2)
     {
-        List<Integer> childBitArray = new ArrayList<>(parentBitArray1.size());
+        List<Integer> childBitArray = new ArrayList<>(parent1.bitArray.size());
 
         // keep track of the bits where parents disagree
-        List<Integer> disagreedBitIndexes = new ArrayList<>(parentBitArray1.size());
+        List<Integer> disagreedBitIndexes = new ArrayList<>(parent1.bitArray.size());
 
 
         // invert one parent if hamming distance it larger than l/2
         boolean invertOneParent = false;
-        if(getHammingDistance(parentBitArray1, parentBitArray2) > (parentBitArray1.size() / 2)) {
+        if(getHammingDistance(parent1.bitArray, parent2.bitArray) > (parent1.bitArray.size() / 2)) {
             invertOneParent = true;
         }
 
-        for(int i = 0; i < parentBitArray1.size(); i++) {
-            int parentBit1 = parentBitArray1.get(i);
-            int parentBit2 = parentBitArray2.get(i);
+        for(int i = 0; i < parent1.bitArray.size(); i++) {
+            int parentBit1 = parent1.bitArray.get(i);
+            int parentBit2 = parent2.bitArray.get(i);
 
             // invert one parent if hamming distance it larger than l/2
             if(invertOneParent) parentBit1 = 1 - parentBit1;
@@ -81,6 +88,8 @@ public class GLS extends BaseAlgorithm {
             if(parentBit1 == parentBit2) {
                 childBitArray.add(i, parentBit1);
             } else {
+                // set stub bit, will be overwritten
+                childBitArray.add(i, -1);
                 disagreedBitIndexes.add(i);
             }
         }
@@ -90,11 +99,11 @@ public class GLS extends BaseAlgorithm {
         List<Integer> randomBitArray = generateRandomBitArray(disagreedBitIndexes.size());
 
         for(int i = 0; i < disagreedBitIndexes.size(); i++) {
-            childBitArray.add(disagreedBitIndexes.get(i), randomBitArray.get(i));
+            childBitArray.set(disagreedBitIndexes.get(i), randomBitArray.get(i));
         }
 
 
-        return childBitArray;
+        return new Solution(childBitArray);
     }
 
     /**

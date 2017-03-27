@@ -9,7 +9,8 @@ class BaseAlgorithm {
 
     Graph graph;
 
-    int functionEvaluations = 0;
+    int fullFunctionEvaluations = 0;
+    int partialFunctionEvaluations = 0;
 
     Solution bestSolution = null;
 
@@ -52,7 +53,7 @@ class BaseAlgorithm {
      */
     int evaluateSolution(Solution solution) {
 
-        functionEvaluations++;
+        fullFunctionEvaluations++;
 
         int colorConflicts = 0;
         // for all nodes
@@ -104,6 +105,8 @@ class BaseAlgorithm {
      */
     private int evaluateSwapPotential(Solution solution, int iZero, int iOne) {
 
+        this.partialFunctionEvaluations++;
+
         // TODO hacky workaround, otherwise the score will divert after some runs
         solution = solution.clone();
 
@@ -119,7 +122,7 @@ class BaseAlgorithm {
 
 
     /**
-     * Generate bitarray as initial solultion
+     * Generate bitArray as initial solution
      *
      * @param nodes
      * @return
