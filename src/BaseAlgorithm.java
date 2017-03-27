@@ -203,4 +203,13 @@ class BaseAlgorithm {
 
         return (stopCPU || stopLocalOptima);
     }
+
+    public Solution hillClimb(Solution solution) {
+        // climb till no improvement is found
+        while (true) {
+            Solution climbedSolution = climbFirstImprovement(solution);
+            if (climbedSolution == null) return solution;
+            solution = climbedSolution;
+        }
+    }
 }

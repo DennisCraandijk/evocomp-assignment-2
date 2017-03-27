@@ -6,12 +6,12 @@ import java.util.List;
  */
 class Population {
 
-    int generation;
+    int iterations;
 
     List<Solution> population;
 
     Population(int populationSize) {
-        this.generation = 0;
+        this.iterations = 0;
         this.population = new ArrayList<>(populationSize);
     }
 
