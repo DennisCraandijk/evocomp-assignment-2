@@ -1,11 +1,15 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Dennis on 22/03/2017.
  */
 public class GLS extends BaseAlgorithm {
-
+	
+	public int nGenerationConverged = 0;
+	
     private int populationSize;
 
     GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
@@ -21,38 +25,52 @@ public class GLS extends BaseAlgorithm {
         Population population = new Population(populationSize);
 
         // generate initial population
-        for(int i = 0; i < populationSize; i++) {
+        while(population.population.size() < populationSize) {
             Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
+            Solution climbedSolution = climbFirstImprovement(solution);
+            // if theres no climbed solution, solution is already optimal, so we dont overwrite it
+            if(climbedSolution != null) solution = climbedSolution;
+            
+            if(population.contains(solution)){
+            	continue;
+            }
+
             solution.fitness = evaluateSolution(solution);
 
             population.addSolution(solution);
         }
-
+        
+        Random rand = new Random();
         // continue till stopping criteria is met
         while (!shouldStop()) {
-
-            for (int i = 0; i < population.population.size(); i++) {
-
-                // break if population iteration exceeds stopping criteria
-                if(shouldStop()) break;
-
-                // climb till no improvement is found
-                while (true) {
-                    Solution climbedSolution = climbFirstImprovement(population.population.get(i));
-                    if (climbedSolution == null) break;
-                    population.population.set(i, climbedSolution);
-                }
-
-                saveNewOptimum(population.population.get(i));
-
+        	// generate 2 distinc indices
+        	int index1 = rand.nextInt(population.population.size());
+        	int index2 = rand.nextInt(population.population.size()-1);
+        	if(index2 >= index1) index2++;
+        	           
+        	Solution child = uniformCrossover(population.population.get(index1), population.population.get(index2));
+        	Solution climbedSolution = climbFirstImprovement(child);
+        	
+        	// if child already in population
+        	if(population.contains(child)){
+        		continue;
+        	}
+        	
+        	// check if child is better than worst of current population
+        	child.fitness = evaluateSolution(child);
+        	sortPopulation(population);
+        	if(child.fitness <= population.population.get(populationSize-1).fitness){
+        		continue;
+        	}
+        	
+        	// if child is unique and improvement of population, add it
+        	population.replaceSolution(child, populationSize-1);
+        	
+        	
+            nGenerationConverged++;
+            if(hasConverged(population)){
+            	break;
             }
-
-            Solution child = uniformCrossover(population.population.get(0), population.population.get(1));
-
-            // TODO crossover and selection
-
-            //TODO exit if converged
-
         }
 
         return this.bestSolution;
@@ -122,5 +140,15 @@ public class GLS extends BaseAlgorithm {
         }
 
         return distance;
+    }
+    
+    private void sortPopulation(Population pop){
+    	Collections.sort(pop.population, (Solution a1, Solution a2) -> a1.fitness-a2.fitness);
+    }
+    
+    // If HammingDistance is 0 on best and worst solution, we assume that it has converged 
+    private boolean hasConverged(Population pop){
+    	sortPopulation(pop);
+    	return getHammingDistance(pop.population.get(0).bitArray, pop.population.get(pop.population.size()-1).bitArray) == 0;
     }
 }

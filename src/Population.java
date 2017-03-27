@@ -19,5 +19,17 @@ class Population {
         population.add(solution);
     }
 
-
+    boolean contains(Solution solution){
+    	for (int i = 0; i < population.size(); i++) {
+			if(population.get(i).bitArray.equals(solution.bitArray)){
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    
+    void replaceSolution(Solution solution, int index){
+    	population.set(index, solution);
+    }
 }
