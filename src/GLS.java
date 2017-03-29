@@ -12,6 +12,8 @@ public class GLS extends BaseAlgorithm {
 
     private int populationSize;
 
+    Population population;
+
     GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
         super(graph, maxLocalOptima, maxCPUTime);
         this.populationSize = populationSize;
@@ -23,10 +25,10 @@ public class GLS extends BaseAlgorithm {
      * @return
      */
     public Solution partition() {
-        Population population = new Population(populationSize);
+        this.population = new Population(populationSize);
 
         // generate initial population
-        while (population.population.size() < populationSize) {
+        while (this.population.population.size() < populationSize) {
             Solution solution = new Solution(generateRandomBitArray(graph.nodes.length));
             solution.fitness = evaluateSolution(solution);
 
@@ -35,22 +37,22 @@ public class GLS extends BaseAlgorithm {
 
             saveNewOptimum(solution);
 
-            if (population.contains(solution)) {
+            if (this.population.contains(solution)) {
                 continue;
             }
 
-            population.addSolution(solution);
+            this.population.addSolution(solution);
         }
 
         Random rand = new Random();
         // continue till stopping criteria is met
         while (!shouldStop()) {
             // generate 2 distinct indices
-            int index1 = rand.nextInt(population.population.size());
-            int index2 = rand.nextInt(population.population.size() - 1);
+            int index1 = rand.nextInt(this.population.population.size());
+            int index2 = rand.nextInt(this.population.population.size() - 1);
             if (index2 >= index1) index2++;
 
-            Solution child = uniformCrossover(population.population.get(index1), population.population.get(index2));
+            Solution child = uniformCrossover(this.population.population.get(index1), this.population.population.get(index2));
             child.fitness = evaluateSolution(child);
 
             child = hillClimb(child);
@@ -58,23 +60,26 @@ public class GLS extends BaseAlgorithm {
             saveNewOptimum(child);
 
             // if child already in population
-            if (population.contains(child)) {
+            if (this.population.contains(child)) {
                 continue;
             }
 
-            sortPopulation(population);
-            if (child.fitness > population.population.get(populationSize - 1).fitness) {
+            sortPopulation();
+            if (child.fitness > this.population.population.get(populationSize - 1).fitness) {
                 continue;
             }
 
             // if child is unique and improvement of population, add it
-            population.replaceSolution(child, populationSize - 1);
+            this.population.replaceSolution(child, populationSize - 1);
 
-            population.iterations++;
+            this.population.iterations++;
+
+            // not necessary, since a solutions has to be unique to enter the population
+            /*
             if (hasConverged(population)) {
                 nIterationsConverged = population.iterations;
                 break;
-            }
+            }*/
         }
 
         return this.bestSolution;
@@ -146,13 +151,7 @@ public class GLS extends BaseAlgorithm {
         return distance;
     }
 
-    private void sortPopulation(Population pop) {
-        Collections.sort(pop.population, (Solution a1, Solution a2) -> a1.fitness - a2.fitness);
-    }
-
-    // If HammingDistance is 0 on best and worst solution, we assume that it has converged 
-    private boolean hasConverged(Population pop) {
-        sortPopulation(pop);
-        return getHammingDistance(pop.population.get(0).bitArray, pop.population.get(pop.population.size() - 1).bitArray) == 0;
+    private void sortPopulation() {
+        Collections.sort(this.population.population, (Solution a1, Solution a2) -> a1.fitness - a2.fitness);
     }
 }
