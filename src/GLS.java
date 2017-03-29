@@ -45,7 +45,7 @@ public class GLS extends BaseAlgorithm {
         Random rand = new Random();
         // continue till stopping criteria is met
         while (!shouldStop()) {
-            // generate 2 distinc indices
+            // generate 2 distinct indices
             int index1 = rand.nextInt(population.population.size());
             int index2 = rand.nextInt(population.population.size() - 1);
             if (index2 >= index1) index2++;

@@ -13,6 +13,7 @@ public class Solution implements Cloneable {
 
 
     List<Integer> bitArray;
+    List<Integer> bitColorConflictCount;
 
     List<List<Integer>> colorIndex;
 
@@ -30,6 +31,7 @@ public class Solution implements Cloneable {
      */
     Solution(List<Integer> bitArray, int fitness) {
         this.bitArray = bitArray;
+        this.bitColorConflictCount = new ArrayList<>(bitArray.size());
         this.fitness = fitness;
         this.colorIndex = constructColorIndex(bitArray);
     }
@@ -63,15 +65,15 @@ public class Solution implements Cloneable {
     void vertexSwap(int iZero, int iOne) {
 
         // swap vertices in the colorIndex
-        int vertexId0 = colorIndex.get(0).get(iZero);
-        int vertexId1 = colorIndex.get(1).get(iOne);
+        int nodeId0 = colorIndex.get(0).get(iZero);
+        int nodeId1 = colorIndex.get(1).get(iOne);
 
-        colorIndex.get(0).set(iZero, vertexId1);
-        colorIndex.get(1).set(iOne, vertexId0);
+        colorIndex.get(0).set(iZero, nodeId1);
+        colorIndex.get(1).set(iOne, nodeId0);
 
         // swap vertices in the bitArray
-        bitArray.set(vertexId0, 1);
-        bitArray.set(vertexId1, 0);
+        bitArray.set(nodeId0, 1);
+        bitArray.set(nodeId1, 0);
 
     }
 
@@ -81,6 +83,7 @@ public class Solution implements Cloneable {
             final Solution result = (Solution) super.clone();
             // copy fields that need to be copied here!
             result.bitArray = new ArrayList<>(bitArray);
+            result.bitColorConflictCount = new ArrayList<>(bitColorConflictCount);
             result.fitness = fitness;
             result.colorIndex = new ArrayList<>(2);
             result.colorIndex.add(0, new ArrayList<>(colorIndex.get(0)));

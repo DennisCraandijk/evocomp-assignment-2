@@ -5,9 +5,9 @@ public class Assignment2 {
 
     public static void main(String[] args) {
 
-//        String algorithmName = "MLS";
+        String algorithmName = "MLS";
 //        String algorithmName = "ILS";
-        String algorithmName = "GLS";
+//        String algorithmName = "GLS";
 
         // set to 0 for infinite
         int maxLocalOptima = 10;
