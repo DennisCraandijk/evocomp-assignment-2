@@ -90,6 +90,7 @@ public class Solution implements Cloneable {
             // copy fields that need to be copied here!
             result.bitArray = new ArrayList<>(bitArray);
             result.bitColorConflictCount = new ArrayList<>(bitColorConflictCount);
+            result.bitTabooUntil = new ArrayList<>(bitTabooUntil);
             result.fitness = fitness;
             result.colorIndex = new ArrayList<>(2);
             result.colorIndex.add(0, new ArrayList<>(colorIndex.get(0)));

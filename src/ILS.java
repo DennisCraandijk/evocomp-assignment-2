@@ -36,7 +36,12 @@ public class ILS extends BaseAlgorithm {
             // continue from a new mutation from the best know solution
             solution = bestSolution.clone();
             solution = mutate(solution, this.mutationSize);
-            solution.fitness = evaluateSolution(solution);
+
+            int evaluation = evaluateSolution(solution);
+            if (solution.fitness != evaluation) {
+                System.out.print("\n\n Error \n\n");
+            }
+            //solution.fitness = evaluateSolution(solution);
         }
 
         return this.bestSolution;
@@ -52,7 +57,16 @@ public class ILS extends BaseAlgorithm {
             int j = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));
             int k = ThreadLocalRandom.current().nextInt(0, (solution.bitArray.size() / 2));
 
+            Integer nodeId1 = solution.colorIndex.get(0).get(j);
+            Integer nodeId2 = solution.colorIndex.get(1).get(k);
+
+            // check if this swap would lower the fitness
+            int swapPotential = evaluateSwapPotential(solution, nodeId1, nodeId2);
+
+            // and update the fitness and all the affected nodes their color conflict count
             solution.vertexSwap(j, k);
+            solution = updateConflictCountAfterSwap(solution, nodeId1, nodeId2);
+            solution.fitness = solution.fitness + swapPotential;
         }
 
         return solution;

@@ -264,7 +264,7 @@ class BaseAlgorithm {
      * @param nodeId2
      * @return
      */
-    private int evaluateSwapPotential(Solution solution, int nodeId1, int nodeId2) {
+    int evaluateSwapPotential(Solution solution, int nodeId1, int nodeId2) {
 
         this.partialFunctionEvaluations++;
 
@@ -292,7 +292,7 @@ class BaseAlgorithm {
      * @param nodeId2
      * @return
      */
-    private Solution updateConflictCountAfterSwap(Solution solution, Integer nodeId1, Integer nodeId2) {
+    Solution updateConflictCountAfterSwap(Solution solution, Integer nodeId1, Integer nodeId2) {
         int[] swappedNodeIds = new int[2];
         swappedNodeIds[0] = nodeId1;
         swappedNodeIds[1] = nodeId2;
