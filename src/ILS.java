@@ -36,12 +36,6 @@ public class ILS extends BaseAlgorithm {
             // continue from a new mutation from the best know solution
             solution = bestSolution.clone();
             solution = mutate(solution, this.mutationSize);
-
-            int evaluation = evaluateSolution(solution);
-            if (solution.fitness != evaluation) {
-                System.out.print("\n\n Error \n\n");
-            }
-            //solution.fitness = evaluateSolution(solution);
         }
 
         return this.bestSolution;

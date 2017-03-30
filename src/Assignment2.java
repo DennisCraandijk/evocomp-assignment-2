@@ -59,10 +59,10 @@ public class Assignment2 {
         /**
          * BEGIN Double checks, can be commented out if everything works ok
          */
-        int evaluation = algorithm.evaluateSolution(best);
+/*        int evaluation = algorithm.evaluateSolution(best);
         if (best.fitness != evaluation) {
             System.out.print("\n\n Error \n\n");
-        }
+        }*/
         /**
          * END Double checks, can be commented out if everything works ok
          */
