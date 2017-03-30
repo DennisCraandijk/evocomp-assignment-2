@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Dennis on 21/03/2017.
@@ -9,9 +10,16 @@ class BaseAlgorithm {
 
     Graph graph;
 
+    String localSearchType;
+    boolean skipConflictlessNodes;
+
     int fullFunctionEvaluations = 0;
     int partialFunctionEvaluations = 0;
     int climbedVertexSwaps = 0;
+
+    //In the paper, on the end of page 388, it is argued these are the best settings for the tabuTenure
+    double tabuTenureAlfa = 0.6;
+    int tabuTenureA = 10;
 
     Solution bestSolution = null;
 
@@ -27,11 +35,13 @@ class BaseAlgorithm {
      * @param graph
      * @param maxLocalOptima
      */
-    BaseAlgorithm(Graph graph, int maxLocalOptima, int maxCPUTime) {
+    BaseAlgorithm(Graph graph, String localSearchType, boolean skipConflictlessNodes, int maxLocalOptima, int maxCPUTime) {
         this.startTime = System.currentTimeMillis();
         this.maxCPUTime = maxCPUTime;
 
         this.graph = graph;
+        this.localSearchType = localSearchType;
+        this.skipConflictlessNodes = skipConflictlessNodes;
 
         this.maxLocalOptima = maxLocalOptima;
         this.localOptima = new ArrayList<>(maxLocalOptima);
@@ -66,7 +76,7 @@ class BaseAlgorithm {
             // remember this
             try {
                 solution.bitColorConflictCount.set(i, colorConflicts);
-            } catch ( IndexOutOfBoundsException e ) {
+            } catch (IndexOutOfBoundsException e) {
                 solution.bitColorConflictCount.add(i, colorConflicts);
             }
 
@@ -104,14 +114,21 @@ class BaseAlgorithm {
 
     /**
      * Hill climb the current solution, till no better solution is found
+     *
      * @param solution
      * @return
      */
-    public Solution hillClimb(Solution solution) {
+    Solution hillClimb(Solution solution) {
         // climb till no improvement is found
         while (true) {
 
-            Solution climbedSolution = climbFirstImprovement(solution);
+            Solution climbedSolution = null;
+
+            if(this.localSearchType=="VSN") {
+                climbedSolution = vertexSwapNeighbourhoodSearch(solution);
+            } else if (this.localSearchType=="TS") {
+                climbedSolution = tabooSearch(solution);
+            }
             if (climbedSolution == null) return solution;
             climbedVertexSwaps++;
             solution = climbedSolution;
@@ -124,7 +141,7 @@ class BaseAlgorithm {
                 System.out.print("\n\n Error \n\n");
             }
 
-            for(int i = 0; i < solution.bitColorConflictCount.size() - 1; i++) {
+            for(int i = 0; i < solution.bitColorConflictCount.size(); i++) {
                 conflictCheck(solution, i);
             }*/
             /**
@@ -142,16 +159,17 @@ class BaseAlgorithm {
      * @param solution
      * @return
      */
-    Solution climbFirstImprovement(Solution solution) {
+    Solution vertexSwapNeighbourhoodSearch(Solution solution) {
 
         // iterate on all nodes with color 0 and for all these nodes iterate all nodes with color 1
         for (int i = 0; i < (this.graph.nodes.length / 2); i++) {
             for (int j = 0; j < (this.graph.nodes.length / 2); j++) {
 
-                this.partialFunctionEvaluations++;
-
                 Integer nodeId1 = solution.colorIndex.get(0).get(i);
                 Integer nodeId2 = solution.colorIndex.get(1).get(j);
+
+                // heuristic from article, skip if current node has no conflicts
+                if (skipConflictlessNodes && (solution.bitColorConflictCount.get(nodeId1) == 0 || solution.bitColorConflictCount.get(nodeId2) == 0)) continue;
 
                 // check if this swap would lower the fitness
                 int swapPotential = evaluateSwapPotential(solution, nodeId1, nodeId2);
@@ -175,18 +193,85 @@ class BaseAlgorithm {
         return null;
     }
 
+    Solution tabooSearch(Solution solution) {
+
+        int bestSwapPotential = 9999; //start with very high number, so the first hit will always be an improvement
+        int bestSwapNodeId1 = 0;
+        int bestSwapNodeI = 0;
+        int bestSwapNodeId2 = 0;
+        int bestSwapNodeJ = 0;
+
+        // iterate on all nodes with color 0 and for all these nodes iterate all nodes with color 1
+        for (int i = 0; i < (this.graph.nodes.length / 2); i++) {
+            for (int j = 0; j < (this.graph.nodes.length / 2); j++) {
+                Integer nodeId1 = solution.colorIndex.get(0).get(i);
+                Integer nodeId2 = solution.colorIndex.get(1).get(j);
+
+                // heuristic from article, skip if current node has no conflicts
+                if (skipConflictlessNodes && (solution.bitColorConflictCount.get(nodeId1) == 0 || solution.bitColorConflictCount.get(nodeId2) == 0)) continue;
+
+                // check if this swap would lower the fitness
+                int swapPotential = evaluateSwapPotential(solution, nodeId1, nodeId2);
+
+                // do not do a taboo move, unless it is an improvement over the best solution so far
+                if ((isTabooMove(solution, nodeId1) || isTabooMove(solution, nodeId2)) && swapPotential >= 0) {
+                    continue;
+                }
+
+                // if swap potential is better or equal (see article) we keep it
+                if(swapPotential <= bestSwapPotential) {
+                    bestSwapPotential = swapPotential;
+                    bestSwapNodeId1 = nodeId1;
+                    bestSwapNodeI = i;
+                    bestSwapNodeId2 = nodeId2;
+                    bestSwapNodeJ = j;
+                }
+            }
+        }
+
+        // if no improvement is found
+        if(bestSwapPotential==9999) return null;
+
+        //otherwise swap and update tabu list
+        makeTabu(solution, bestSwapNodeId1);
+        makeTabu(solution, bestSwapNodeId2);
+
+        // if so, perform the swap
+        // and update the fitness and all the affected nodes their color conflict count
+        solution.vertexSwap(bestSwapNodeI, bestSwapNodeJ);
+        solution = updateConflictCountAfterSwap(solution, bestSwapNodeId1, bestSwapNodeId2);
+        solution.fitness = solution.fitness + bestSwapPotential;
+
+        return solution;
+    }
+
+    boolean isTabooMove(Solution solution, int nodeId) {
+        return solution.bitTabooUntil.get(nodeId) > localOptima.size();
+    }
+
+    private void makeTabu(Solution solution, int nodeId) {
+        Random rand = new Random();
+        int tabuTenure = this.localOptima.size () + rand.nextInt(tabuTenureA) + (int) (tabuTenureAlfa * solution.fitness);
+
+        solution.bitTabooUntil.set(nodeId, tabuTenure);
+    }
+
     /**
      * How much would the fitness increase if these nodes swap
+     *
      * @param solution
      * @param nodeId1
      * @param nodeId2
      * @return
      */
     private int evaluateSwapPotential(Solution solution, int nodeId1, int nodeId2) {
+
+        this.partialFunctionEvaluations++;
+
         int currentColorConflictsNode1 = solution.bitColorConflictCount.get(nodeId1);
         int currentColorConflictsNode2 = solution.bitColorConflictCount.get(nodeId2);
 
-        // if this node changes color, the new amount of concflicts is the total amount of connected nodes minus the current conflicting nodes
+        // if this node changes color, the new amount of conflicts is the total amount of connected nodes minus the current conflicting nodes
         int newColorConflictsNode1 = this.graph.nodes[nodeId1].length - currentColorConflictsNode1;
         int newColorConflictsNode2 = this.graph.nodes[nodeId2].length - currentColorConflictsNode2;
 
@@ -201,6 +286,7 @@ class BaseAlgorithm {
 
     /**
      * updates the color conflict count of the swapped nodes and all their connected nodes
+     *
      * @param solution
      * @param nodeId1
      * @param nodeId2
@@ -212,7 +298,7 @@ class BaseAlgorithm {
         swappedNodeIds[1] = nodeId2;
 
         // iterate over both swapped nodes
-        for(int i = 0; i < swappedNodeIds.length; i++) {
+        for (int i = 0; i < swappedNodeIds.length; i++) {
 
             //take the node id and the swapped node id
             int primaryNodeId = swappedNodeIds[i];
@@ -250,11 +336,12 @@ class BaseAlgorithm {
 
     /**
      * returns if these nodes are connected
+     *
      * @param nodeId1
      * @param nodeId2
      * @return
      */
-    public boolean areConnectedNodes(int nodeId1, int nodeId2) {
+    private boolean areConnectedNodes(int nodeId1, int nodeId2) {
 
         // for all edges with unequal color, increment fitness
         for (int i = 0; i < this.graph.nodes[nodeId1].length; i++) {

@@ -8,8 +8,8 @@ public class MLS extends BaseAlgorithm {
      * @param graph
      * @param maxLocalOptima
      */
-    MLS(Graph graph, int maxLocalOptima, int maxCPUTime) {
-        super(graph, maxLocalOptima, maxCPUTime);
+    MLS(Graph graph, String localSearchType, boolean skipConflictlessNodes, int maxLocalOptima, int maxCPUTime) {
+        super(graph, localSearchType, skipConflictlessNodes, maxLocalOptima, maxCPUTime);
     }
 
     public Solution partition() {

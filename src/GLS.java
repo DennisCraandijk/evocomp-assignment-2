@@ -14,8 +14,8 @@ public class GLS extends BaseAlgorithm {
 
     Population population;
 
-    GLS(Graph graph, int maxLocalOptima, int maxCPUTime, int populationSize) {
-        super(graph, maxLocalOptima, maxCPUTime);
+    GLS(Graph graph, String localSearchType, boolean skipConflictlessNodes, int maxLocalOptima, int maxCPUTime, int populationSize) {
+        super(graph, localSearchType, skipConflictlessNodes, maxLocalOptima, maxCPUTime);
         this.populationSize = populationSize;
     }
 

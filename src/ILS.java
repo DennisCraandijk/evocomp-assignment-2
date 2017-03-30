@@ -7,8 +7,8 @@ public class ILS extends BaseAlgorithm {
 
     private int mutationSize;
 
-    ILS(Graph graph, int maxLocalOptima, int maxCPUTime, int mutationSize) {
-        super(graph, maxLocalOptima, maxCPUTime);
+    ILS(Graph graph, String localSearchType, boolean skipConflictlessNodes, int maxLocalOptima, int maxCPUTime, int mutationSize) {
+        super(graph, localSearchType, skipConflictlessNodes, maxLocalOptima, maxCPUTime);
         this.mutationSize = mutationSize;
     }
 

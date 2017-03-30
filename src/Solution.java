@@ -14,6 +14,7 @@ public class Solution implements Cloneable {
 
     List<Integer> bitArray;
     List<Integer> bitColorConflictCount;
+    List<Integer> bitTabooUntil;
 
     List<List<Integer>> colorIndex;
 
@@ -32,8 +33,13 @@ public class Solution implements Cloneable {
     Solution(List<Integer> bitArray, int fitness) {
         this.bitArray = bitArray;
         this.bitColorConflictCount = new ArrayList<>(bitArray.size());
+        this.bitTabooUntil = new ArrayList<>(bitArray.size());
         this.fitness = fitness;
         this.colorIndex = constructColorIndex(bitArray);
+
+        for(int i = 0; i < bitArray.size(); i++) {
+            this.bitTabooUntil.add(i, 0);
+        }
     }
 
     private List<List<Integer>> constructColorIndex (List<Integer> bitArray){
